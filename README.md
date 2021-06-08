@@ -3,9 +3,9 @@
 # Description
 - Pokemons download from server (default 10 per page). Load More button loads another page of Pokemons, load 10/20/50 loads certain number of Pokemon Cards.
 # Links
-- [DEMO LINK](https://natalia-ponomarenko.github.io/)
+- [DEMO LINK](https://natalia-ponomarenko.github.io/pokedex-app)
 
-- [Code](https://github.com/natalia-ponomarenko/)
+- [Code](https://github.com/natalia-ponomarenko/pokedex-app)
 
 
 # Technologies

@@ -4,6 +4,7 @@ import { Card } from './components/Card';
 import { getAllPokemon, getPokemon } from './helpers/api';
 import { URL, URL20, URL50 } from './helpers/constants';
 import './App.scss';
+require('dotenv').config();
 
 function App() {
   const [pokemonData, setPokemonData] = useState([]);
