@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from './components/Card';
-// import { Button } from './components/Button/Button';
+import { Button } from './components/Button/Button';
 import { getAllPokemon, getPokemon } from './helpers/api';
-import { URL, URL20, URL50 } from './helpers/constants';
+import { URL, URL20, URL50, URL_ALL } from './helpers/constants';
 import './App.scss';
 require('dotenv').config();
 
@@ -11,6 +11,7 @@ function App() {
   const [nextPage, setNextPage] = useState('');
   const [prevPage, setPrevPage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -35,6 +36,7 @@ function App() {
   };
 
   const load = async(url) => {
+    setLoading(true);
     let response = await getAllPokemon(url);
     setNextPage(response.next);
     setPrevPage(response.previous);
@@ -61,22 +63,17 @@ function App() {
     setLoading(false);
   }
 
-  // handleChange = (actualEvent) => {
-  //   const { value } = actualEvent.target;
-  //   const inputText = value.toLowerCase();
-
-  //   this.setState({
-  //     query: value,
-  //     movies: moviesFromServer.filter(
-  //       movie => movie.title.toLowerCase().includes(
-  //         inputText,
-  //       )
-  //       || movie.description.toLowerCase().includes(
-  //         inputText,
-  //       ),
-  //     ),
-  //   });
-  // }
+  const handleChange = (event) => {
+    const { value } = event.target;
+    const inputText = value.toLowerCase();
+    console.log(inputText)
+    setQuery(inputText);
+    setPokemonData(pokemonData.filter(pokemon => pokemon.name.toLowerCase().startsWith(
+      inputText,
+    ) || pokemon.name.toLowerCase().includes(
+      inputText,
+    )));
+  }
 
   return (
     <>
@@ -95,8 +92,8 @@ function App() {
             id="search-query"
             className="main__input"
             placeholder="Start filter the pokemons!"
-            // value={this.state.query}
-            // onChange={this.handleChange}
+            value={query}
+            onChange={handleChange}
           />
           <div className="main__container">
             {pokemonData.map(pokemon => (
@@ -109,42 +106,60 @@ function App() {
           <div className='main__button-container'>
             {/* <Button onClick={next}>
             Load more
-            </Button> */}
-            <button
-              className='main__button'
-              onClick={next}
-            >
-              Load more
-            </button>
-          
-          {prevPage && (
-            <button
-              className='main__button'
-              onClick={previous}
-            >
-              Back
-            </button>
-          )}
-          {pokemonData.length > 10 &&
-            <button
-              className='main__button'
-              onClick={() => load(URL)}
-            >
-              Load 10
-            </button>
-          }
-            <button
-              className='main__button'
-              onClick={() => load(URL20)}
-            >
-              Load 20
-            </button>
-            <button
-              className='main__button'
-              onClick={() => load(URL50)}
-            >
-              Load 50
-            </button>
+          </Button> */}
+            {prevPage && (
+              <button
+                className='main__button'
+                onClick={previous}
+              >
+                Back
+              </button>
+            )}
+
+            {nextPage && (
+              <button
+                className='main__button'
+                onClick={next}
+              >
+                Load more
+              </button>
+            )}
+
+            {pokemonData.length > 10 &&
+              <button
+                className='main__button'
+                onClick={() => load(URL)}
+              >
+                Load 10
+              </button>
+            }
+
+            {pokemonData.length < 10 &&
+              <button
+                className='main__button'
+                onClick={() => load(URL_ALL)}
+              >
+                Load all?
+              </button>
+            }
+
+            {pokemonData.length !== 20 && (
+              <button
+                className='main__button'
+                onClick={() => load(URL20)}
+              >
+                Load 20
+              </button>
+            )}
+
+            {pokemonData.length !== 50 && (
+              <button
+                className='main__button'
+                onClick={() => load(URL50)}
+              >
+                Load 50
+              </button>
+            )}
           </div>
         </div>
       )}

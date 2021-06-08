@@ -1,11 +1,14 @@
 ## React Pokedex App
 
 # Description
-- Pokemons download from server (default 10 per page). Load More button loads another page of Pokemons, load 10/20/50 loads certain number of Pokemon Cards.
+- Pokemons download from server (default 10 per page). "Load More" button loads another page of Pokemons, "Back" returns back to previous page, "Load all?" downloads all possible Pokemons from server in case person can't find the needed one, load 10/20/50 loads certain number of Pokemon Cards. Every card reflects the info about the Pokemon - height and weight, name, avatar, types and total moves. The filter box represents sorting of cards by Pokemon's name.
+
 # Links
 - [DEMO LINK](https://natalia-ponomarenko.github.io/pokedex-app)
 
 - [Code](https://github.com/natalia-ponomarenko/pokedex-app)
+
+- [Task](https://docs.google.com/document/d/1x-eS75CZdMX_zsu6DqryAue8iIVgTJcp2upB0LKPWdM/edit)
 
 
 # Technologies
