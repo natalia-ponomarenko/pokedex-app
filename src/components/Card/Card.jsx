@@ -67,7 +67,7 @@ Card.propTypes = {
     height: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     types: PropTypes.arrayOf(PropTypes.shape({
-      slot: PropTypes.object
+      slot: PropTypes.number
     })).isRequired,
     moves: PropTypes.arrayOf(PropTypes.object).isRequired
   }),

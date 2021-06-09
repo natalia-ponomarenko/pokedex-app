@@ -41,10 +41,11 @@ Stats.propTypes = {
       })
     })).isRequired
   }),
-  selectPokemon: PropTypes.func.isRequired,
+  selectPokemon: PropTypes.func,
   closeModal: PropTypes.func.isRequired
 }
 
 Stats.defaultProps = {
-  pokemon: {}
+  pokemon: {},
+  selectPokemon: () => {}
 }
