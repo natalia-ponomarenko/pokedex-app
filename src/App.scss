@@ -1,8 +1,6 @@
 .header {
-  font-family: 'Arial, Helvetica, sans-serif';
   margin-bottom: 20px;
   padding: 20px 0;
-  font-size: 25px;
   text-align: center;
   text-transform: uppercase;
 }
@@ -39,14 +37,6 @@
     transition: transform 1s , color 1s;
   }
 
-  &__input {
-    border: 1px solid grey;
-    height: 30px;
-    width: 200px;
-    padding: 5px;
-    color: black;
-  }
-
   @media screen and (max-width: 1000px) {
     &__button-container {
       max-width: 350px;
@@ -70,6 +60,14 @@
     margin-right: -50%;
     transform: translate(-50%, -50%)
   }
+}
+
+.button {
+  margin: 5px;
+}
+
+.input {
+  width: 300px !important;
 }
 
 /* Safari */

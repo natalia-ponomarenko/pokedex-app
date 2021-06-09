@@ -1,10 +1,15 @@
-import React from 'react';
-import './Card.scss';
-import pokemonTypes from '../../helpers/pokemonTypes';
+import PropTypes from 'prop-types'
+import React from 'react'
+import pokemonTypes from '../../helpers/pokemonTypes'
+import './Card.scss'
 
-export function Card({ pokemon }) {
-  return (
-    <div className='card'>
+export const Card = ({ pokemon, selectPokemon, openModal }) => (
+<div className="card">
+    <div className='card__card'
+      onClick={() => {
+        selectPokemon(pokemon.id)
+        openModal()
+      }}>
       <div className="card__container-wrapper">
         <div className='card__height-container'>
           <span className='card__height'>
@@ -28,7 +33,7 @@ export function Card({ pokemon }) {
         </div>
       </div>
       <div className='card__name'>
-          {`${pokemon.name}`}
+        {`${pokemon.name}`}
       </div>
       <div className='card__image-container'>
         <img
@@ -52,5 +57,24 @@ export function Card({ pokemon }) {
         {`Total moves: ${pokemon.moves.length}`}
       </div>
     </div>
-  );
+  </div>
+)
+
+Card.propTypes = {
+  pokemon: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    weight: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    types: PropTypes.arrayOf(PropTypes.shape({
+      slot: PropTypes.object
+    })).isRequired,
+    moves: PropTypes.arrayOf(PropTypes.object).isRequired
+  }),
+  selectPokemon: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired
+}
+
+Card.defaultProps = {
+  pokemon: {}
 }

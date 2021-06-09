@@ -16,7 +16,7 @@ const pokemonTypes = {
   dragon: '#6F35FC',
   dark: '#705746',
   steel: '#B7B7CE',
-  fairy: '#D685AD',
-};
+  fairy: '#D685AD'
+}
 
-export default pokemonTypes;
+export default pokemonTypes
