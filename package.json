@@ -1,6 +1,6 @@
 {
   "name": "pokedex-app",
-  "homepage": "https://natalia-ponomarenko/github.io/pokedex-app",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

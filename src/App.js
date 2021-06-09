@@ -125,44 +125,37 @@ function App () {
             ))}
           </div>
           <div className='main__button-container'>
-
             {prevPage && (
               <Button action={previous} className="button is-warning is-focused">
                 &lt; Back
               </Button>
             )}
-
             {nextPage && (
               <Button action={next} className="button is-warning is-focused">
                 Next &gt;
               </Button>
             )}
-
             {pokemonData.length > 10 &&
               <Button action={() => load(URL)} className="button is-info is-focused">
               Load 10
               </Button>
             }
-
             {pokemonData.length < 10 &&
               <Button action={() => load(URL_ALL)} className="button is-info is-focused">
               Load all?
               </Button>
             }
-
             {pokemonData.length !== 20 && (
               <Button action={() => load(URL20)} className="button is-info is-focused">
               Load 20
               </Button>
             )}
-
             {pokemonData.length !== 50 && (
               <Button action={() => load(URL50)} className="button is-info is-focused">
               Load 50
               </Button>
             )}
           </div>
-
             <Modal
               isOpen={modalIsOpen}
               onRequestClose={closeModal}

@@ -10,7 +10,6 @@
 
 - [Task](https://docs.google.com/document/d/1x-eS75CZdMX_zsu6DqryAue8iIVgTJcp2upB0LKPWdM/edit)
 
-
 # Technologies
 - React.js
 - React hooks
@@ -19,7 +18,6 @@
 - Bulma
 - Sass
 - BEM
-
 
 # How to run project locally
 1. Fork and clone this repository
