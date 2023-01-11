@@ -2,11 +2,12 @@ import React from 'react'
 import './Stats.scss'
 import PropTypes from 'prop-types'
 
-export const Stats = ({ pokemon, closeModal }) => (
+export const Stats = ({ pokemon, closeModal }) => {
+  return (
     <div className='stats__container' onClick={closeModal}>
       <div className='stats__image-container'>
         <img
-          src={`https://pokeres.bastionbot.org/images/pokemon/${pokemon.id}.png`}
+          src={`https://www.serebii.net/art/th/${pokemon.id}.png`}
           alt={pokemon.name} className="stats__image"
         />
       </div>
@@ -28,7 +29,8 @@ export const Stats = ({ pokemon, closeModal }) => (
         ))}
       </div>
     </div>
-)
+  )
+}
 
 Stats.propTypes = {
   pokemon: PropTypes.shape({

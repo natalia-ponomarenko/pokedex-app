@@ -2,43 +2,47 @@ import 'bulma'
 import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import './App.scss'
-import { Button } from './components/Button/Button'
+// import { Button } from './components/Button/Button'
 import { Card } from './components/Card'
 import { Stats } from './components/Stats/Stats'
-import { getAllPokemon, getPokemon } from './helpers/api'
-import { URL, URL20, URL50, URL_ALL } from './helpers/constants'
+import { getAllPokemon, getPokemon, getTypes } from './helpers/api'
+import { URL_ALL } from './helpers/constants'
+// , URL20, URL50, URL_ALL } from './helpers/constants'
 import { modalStyles } from './helpers/modalStyles'
 
 Modal.setAppElement('#root')
 
 function App () {
   const [pokemonData, setPokemonData] = useState([])
-  const [nextPage, setNextPage] = useState('')
-  const [prevPage, setPrevPage] = useState('')
+  // const [nextPage, setNextPage] = useState('')
+  // const [prevPage, setPrevPage] = useState('')
   const [loading, setLoading] = useState(true)
   const [modalIsOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [pokemon, setPokemon] = useState([])
+  const [types, setTypes] = useState([])
 
   useEffect(() => {
     const downloadData = async () => {
       setLoading(true)
-      const response = await getAllPokemon(URL)
-      setNextPage(response.next)
-      setPrevPage(response.previous)
+      const response = await getAllPokemon(URL_ALL)
+      // setNextPage(response.next)
+      // setPrevPage(response.previous)
       await loadPokemon(response.results)
       setLoading(false)
     }
 
     downloadData()
+    getTypes().then(types => setTypes(types))
+    // console.log(types)
   }, [])
 
   const loadPokemon = async (data) => {
     const pokemon = await Promise.all(
-      data.map(async pokemon => {
+      data.map(async (pokemon) => {
         return await getPokemon(pokemon.url)
-      }
-      ))
+      })
+    )
 
     setPokemonData(pokemon)
   }
@@ -52,54 +56,67 @@ function App () {
   }
 
   const handlePokemonSelection = (pokemonId) => {
-    setPokemon(pokemonData.filter(pokemon => pokemon.id === pokemonId))
+    setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
-  const load = async (url) => {
-    setLoading(true)
-    const response = await getAllPokemon(url)
-    setNextPage(response.next)
-    setPrevPage(response.previous)
-    await loadPokemon(response.results)
-    setLoading(false)
-  }
+  // const load = async (url) => {
+  //   setLoading(true)
+  //   const response = await getAllPokemon(url)
+  //   setNextPage(response.next)
+  //   setPrevPage(response.previous)
+  //   await loadPokemon(response.results)
+  //   setLoading(false)
+  // }
 
-  const pagination = async (page) => {
-    if (page === prevPage && !prevPage) {
-      return
-    }
-    setLoading(true)
-    const data = await getAllPokemon(page)
-    await loadPokemon(data.results)
-    setNextPage(data.next)
-    setPrevPage(data.previous)
-    setLoading(false)
-  }
+  // const pagination = async (page) => {
+  //   if (page === prevPage && !prevPage) {
+  //     return
+  //   }
+  //   setLoading(true)
+  //   const data = await getAllPokemon(page)
+  //   await loadPokemon(data.results)
+  //   setNextPage(data.next)
+  //   setPrevPage(data.previous)
+  //   setLoading(false)
+  // }
 
   const handleChange = (event) => {
     const { value } = event.target
     const inputText = value.toLowerCase()
     setQuery(inputText)
-    setPokemonData(pokemonData.filter(
-      pokemon => pokemon.name.toLowerCase().startsWith(inputText) ||
-      pokemon.name.toLowerCase().includes(inputText))
+    setPokemonData(
+      pokemonData.filter(
+        (pokemon) =>
+          pokemon.name.toLowerCase().startsWith(inputText) ||
+          pokemon.name.toLowerCase().includes(inputText)
+      )
     )
+  }
+
+  function filterByType () {
+    const filteredPokemonList = pokemonData
+      .filter(pokemon => pokemon.types.some((type) => type.type.name === 'water'))
+    setPokemonData(filteredPokemonList)
   }
 
   return (
     <>
-    <div className="header title is-2">Pokedex App</div>
+      <div className="header title is-2">Pokedex App</div>
       {loading
         ? (
         <>
-          <div className='loader__container'>
-            <div className='loader'>
-            </div>
+          <div className="loader__container">
+            <div className="loader"></div>
           </div>
         </>
           )
         : (
-        <div className='main'>
+        <div className="main">
+          {types.map((type) => (
+            <button key={type.id}>{type.name}</button>
+          ))
+          }
+          <button onClick={filterByType}>Water</button>
           <input
             type="text"
             id="search-query"
@@ -109,7 +126,7 @@ function App () {
             onChange={handleChange}
           />
           <div className="main__container">
-            {pokemonData.map(pokemon => (
+            {pokemonData.map((pokemon) => (
               <Card
                 key={pokemon.id}
                 pokemon={pokemon}
@@ -118,55 +135,73 @@ function App () {
               />
             ))}
           </div>
-          <div className='main__button-container'>
-            {prevPage && (
-              <Button action={() => pagination(prevPage)} className="button is-warning is-focused">
+          <div className="main__button-container">
+            {/* {prevPage && (
+              <Button
+                action={() => pagination(prevPage)}
+                className="button is-warning is-focused"
+              >
                 &lt; Back
               </Button>
             )}
             {nextPage && (
-              <Button action={() => pagination(nextPage)} className="button is-warning is-focused">
+              <Button
+                action={() => pagination(nextPage)}
+                className="button is-warning is-focused"
+              >
                 Next &gt;
               </Button>
             )}
-            {pokemonData.length > 10 &&
-              <Button action={() => load(URL)} className="button is-info is-focused">
-              Load 10
+            {pokemonData.length > 10 && (
+              <Button
+                action={() => load(URL)}
+                className="button is-info is-focused"
+              >
+                Load 10
               </Button>
-            }
-            {pokemonData.length < 10 &&
-              <Button action={() => load(URL_ALL)} className="button is-info is-focused">
-              Load all?
+            )}
+            {pokemonData.length < 10 && (
+              <Button
+                action={() => load(URL_ALL)}
+                className="button is-info is-focused"
+              >
+                Load all?
               </Button>
-            }
+            )}
             {pokemonData.length !== 20 && (
-              <Button action={() => load(URL20)} className="button is-info is-focused">
-              Load 20
+              <Button
+                action={() => load(URL20)}
+                className="button is-info is-focused"
+              >
+                Load 20
               </Button>
             )}
             {pokemonData.length !== 50 && (
-              <Button action={() => load(URL50)} className="button is-info is-focused">
-              Load 50
+              <Button
+                action={() => load(URL50)}
+                className="button is-info is-focused"
+              >
+                Load 50
               </Button>
-            )}
+            )} */}
           </div>
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={modalStyles}
-              contentLabel='Example Modal'
-              closeTimeoutMS={300}
-            >
-              <div>
-                {pokemon.map(pokemon => (
-                  <Stats
-                    pokemon={pokemon}
-                    key={pokemon.id}
-                    closeModal={closeModal}
-                  />
-                ))}
-              </div>
-            </Modal>
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={modalStyles}
+            contentLabel="Example Modal"
+            closeTimeoutMS={300}
+          >
+            <div>
+              {pokemon.map((pokemon) => (
+                <Stats
+                  pokemon={pokemon}
+                  key={pokemon.id}
+                  closeModal={closeModal}
+                />
+              ))}
+            </div>
+          </Modal>
         </div>
           )}
     </>
