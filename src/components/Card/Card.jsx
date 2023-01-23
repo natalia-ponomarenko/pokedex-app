@@ -4,7 +4,10 @@ import pokemonTypes from '../../helpers/pokemonTypes'
 import './Card.scss'
 
 export const Card = ({ pokemon, selectPokemon, openModal }) => {
-  // console.log(pokemon.types.map((el) => el.type.name))
+  const addDefaultSrc = (event) => {
+    event.target.src = '../images/Poke_ball.png'
+  }
+
   return (
     <div className="card">
       <div
@@ -32,7 +35,8 @@ export const Card = ({ pokemon, selectPokemon, openModal }) => {
         <div className="card__image-container">
           <img
             className="card__image"
-            src={`https://www.serebii.net/art/th/${pokemon.id}.png`}
+            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+            onError={addDefaultSrc}
             alt={pokemon.name}
           />
         </div>
