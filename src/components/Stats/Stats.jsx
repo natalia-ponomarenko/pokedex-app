@@ -7,7 +7,7 @@ export const Stats = ({ pokemon, closeModal }) => {
     <div className='stats__container' onClick={closeModal}>
       <div className='stats__image-container'>
         <img
-          src={`https://www.serebii.net/art/th/${pokemon.id}.png`}
+          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
           alt={pokemon.name} className="stats__image"
         />
       </div>

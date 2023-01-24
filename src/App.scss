@@ -37,6 +37,20 @@
     transition: transform 1s , color 1s;
   }
 
+  &__types-buttons {
+    display: flex;
+    margin: 10px 0;
+  }
+
+  &__type-button {
+    margin: 0 2px;
+    padding: 5px 10px;
+    text-transform: capitalize;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+  }
+
   @media screen and (max-width: 1000px) {
     &__button-container {
       max-width: 350px;

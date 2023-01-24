@@ -2,62 +2,53 @@ import 'bulma'
 import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import './App.scss'
-// import { Button } from './components/Button/Button'
+import { Button } from './components/Button/Button'
 import { Card } from './components/Card'
 import { Stats } from './components/Stats/Stats'
 import { getTypes } from './helpers/api'
-import { URL50 } from './helpers/constants'
-// , URL20, URL50, URL_ALL } from './helpers/constants'
 import { modalStyles } from './helpers/modalStyles'
+import pokemonTypes from './helpers/pokemonTypes'
+import { URL_ALL } from './helpers/constants'
 
 Modal.setAppElement('#root')
 
-// const URL = 'https://pokeapi.co/api/v2/pokemon/'
-
 function App () {
+  const [currentUrl, setCurrentUrl] = useState('https://pokeapi.co/api/v2/pokemon/?limit=50')
   const [pokemonData, setPokemonData] = useState([])
-  // const [nextPage, setNextPage] = useState('')
-  // const [prevPage, setPrevPage] = useState('')
+  const [nextPage, setNextPage] = useState('')
+  const [prevPage, setPrevPage] = useState('')
   const [loading, setLoading] = useState(true)
   const [modalIsOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [pokemon, setPokemon] = useState([])
   const [types, setTypes] = useState([])
 
-  //  const pagination = async (page) => {
-  //   if (page === prevPage && !prevPage) {
-  //     return
-  //   }
-  //   setNextPage(data.next)
-  //   setPrevPage(data.previous)
-  // }
+  const loadPokemon = async (data) => {
+    const pokemon = await Promise.all(
+      data.map(async (pokemon) => {
+        return await fetch(pokemon.url)
+          .then((res) => res.json())
+          .then((data) => data)
+      })
+    )
 
-  const dowloadData = async () => {
-    setLoading(true)
-    const response = await fetch(URL50)
-    const data = await response.json()
-
-    const loadPokemon = async (data) => {
-      const pokemon = await Promise.all(
-        data.map(async (pokemon) => {
-          return await fetch(pokemon.url)
-            .then((res) => res.json())
-            .then((data) => data)
-        })
-      )
-
-      setPokemonData(pokemon)
-    }
-
-    loadPokemon(data.results)
-    getTypes().then((types) => setTypes(types))
-    setLoading(false)
-    console.log(pokemonData)
+    setPokemonData(pokemon)
   }
 
   useEffect(() => {
-    dowloadData()
-  }, [])
+    const dowloadData = async (url) => {
+      setLoading(true)
+      const response = await fetch(url)
+      const data = await response.json()
+      loadPokemon(data.results)
+      setPrevPage(data.previous)
+      setNextPage(data.next)
+      getTypes().then((types) => setTypes(types))
+      setLoading(false)
+      console.log(pokemonData)
+    }
+    dowloadData(currentUrl)
+  }, [currentUrl])
 
   function openModal () {
     setIsOpen(true)
@@ -71,7 +62,7 @@ function App () {
     setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
-  const handleChange = (event) => {
+  const handleInputChange = (event) => {
     const { value } = event.target
     const inputText = value.toLowerCase()
     setQuery(inputText)
@@ -91,6 +82,20 @@ function App () {
     setPokemonData(filteredPokemonList)
   }
 
+  function goToTheNextPage () {
+    setCurrentUrl(nextPage)
+  }
+
+  function goToThePreviousPage () {
+    setCurrentUrl(prevPage)
+  }
+
+  function load (url) {
+    setLoading(true)
+    setCurrentUrl(url)
+    setLoading(false)
+  }
+
   return (
     <>
       <div className="header title is-2">Pokedex App</div>
@@ -104,18 +109,21 @@ function App () {
           )
         : (
         <div className="main">
+          <div className="main__types-buttons">
           {types.map((type) => (
-            <button key={type.name} onClick={() => filterByType(type.name)}>
+            <button key={type.name} onClick={() => filterByType(type.name)} className="main__type-button" style={{ backgroundColor: pokemonTypes[type.name] }}>
               {type.name}
             </button>
           ))}
+          </div>
+          <button onClick={() => load(URL_ALL)} className="button is-warning is-focused">Load `em all</button>
           <input
             type="text"
             id="search-query"
             className="input input is-normal"
             placeholder="Start filter the pokemons!"
             value={query}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
           <div className="main__container">
             { pokemonData.length
@@ -135,9 +143,9 @@ function App () {
             }
           </div>
           <div className="main__button-container">
-            {/* {prevPage && (
+            {prevPage && (
               <Button
-                action={() => pagination(prevPage)}
+                action={() => goToThePreviousPage(prevPage)}
                 className="button is-warning is-focused"
               >
                 &lt; Back
@@ -145,44 +153,12 @@ function App () {
             )}
             {nextPage && (
               <Button
-                action={() => pagination(nextPage)}
+                action={() => goToTheNextPage(nextPage)}
                 className="button is-warning is-focused"
               >
                 Next &gt;
               </Button>
-            )} */}
-            {/* {pokemonData.length > 10 && (
-              <Button
-                action={() => load(URL)}
-                className="button is-info is-focused"
-              >
-                Load 10
-              </Button>
             )}
-            {pokemonData.length < 10 && (
-              <Button
-                action={() => load(URL_ALL)}
-                className="button is-info is-focused"
-              >
-                Load all?
-              </Button>
-            )}
-            {pokemonData.length !== 20 && (
-              <Button
-                action={() => load(URL20)}
-                className="button is-info is-focused"
-              >
-                Load 20
-              </Button>
-            )}
-            {pokemonData.length !== 50 && (
-              <Button
-                action={() => load(URL50)}
-                className="button is-info is-focused"
-              >
-                Load 50
-              </Button>
-            )} */}
           </div>
           <Modal
             isOpen={modalIsOpen}
