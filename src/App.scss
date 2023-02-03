@@ -43,12 +43,12 @@
   }
 
   &__type-button {
-    margin: 0 2px;
+    margin: 0 5px;
     padding: 5px 10px;
     text-transform: capitalize;
     border-radius: 5px;
     outline: none;
-    border: none;
+    border: 2px solid transparent
   }
 
   @media screen and (max-width: 1000px) {
@@ -58,13 +58,18 @@
   }
 }
 
+.pressed {
+  border: 2px solid yellow;
+  box-shadow: -3px -3px 9px 3px rgba(232,242,126,0.8);
+}
+
 .loader {
   width: 120px;
   height: 120px;
   border: 16px solid #f3f3f3;
   border-radius: 50%;
   border-top: 16px solid #EFEFBB;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
+  -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 
   &__container {
@@ -84,7 +89,6 @@
   width: 300px !important;
 }
 
-/* Safari */
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }

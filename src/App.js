@@ -8,20 +8,21 @@ import { Stats } from './components/Stats/Stats'
 import { getTypes } from './helpers/api'
 import { modalStyles } from './helpers/modalStyles'
 import pokemonTypes from './helpers/pokemonTypes'
-import { URL_ALL } from './helpers/constants'
+import { URL_ALL, URL20, URL50 } from './helpers/constants'
 
 Modal.setAppElement('#root')
 
 function App () {
-  const [currentUrl, setCurrentUrl] = useState('https://pokeapi.co/api/v2/pokemon/?limit=50')
+  const [currentUrl, setCurrentUrl] = useState(URL20)
   const [pokemonData, setPokemonData] = useState([])
   const [nextPage, setNextPage] = useState('')
   const [prevPage, setPrevPage] = useState('')
   const [loading, setLoading] = useState(true)
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [query, setQuery] = useState('')
   const [pokemon, setPokemon] = useState([])
   const [types, setTypes] = useState([])
+  const [filterArray, setFilterArray] = useState([])
+  const [numberToLoad, setNumberToLoad] = useState('20')
 
   const loadPokemon = async (data) => {
     const pokemon = await Promise.all(
@@ -35,6 +36,9 @@ function App () {
     setPokemonData(pokemon)
   }
 
+  const [filteredData, setFilteredData] = useState(pokemonData)
+  const [filter, setFilter] = useState('')
+
   useEffect(() => {
     const dowloadData = async (url) => {
       setLoading(true)
@@ -45,10 +49,22 @@ function App () {
       setNextPage(data.next)
       getTypes().then((types) => setTypes(types))
       setLoading(false)
-      console.log(pokemonData)
     }
     dowloadData(currentUrl)
+    setFilterArray([])
   }, [currentUrl])
+
+  useEffect(() => {
+    if (!filter) {
+      setFilteredData(pokemonData)
+      return
+    }
+    const query = filter.toLowerCase()
+    const filteredData = filter
+      ? pokemonData.filter(pokemon => pokemon.name.toLowerCase().startsWith(query))
+      : pokemonData
+    setFilteredData(filteredData)
+  }, [filter, pokemonData])
 
   function openModal () {
     setIsOpen(true)
@@ -62,38 +78,52 @@ function App () {
     setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
-  const handleInputChange = (event) => {
-    const { value } = event.target
-    const inputText = value.toLowerCase()
-    setQuery(inputText)
-    setPokemonData(
-      pokemonData.filter(
-        (pokemon) =>
-          pokemon.name.toLowerCase().startsWith(inputText) ||
-          pokemon.name.toLowerCase().includes(inputText)
-      )
-    )
-  }
-
   function filterByType (name) {
-    const filteredPokemonList = pokemonData.filter((pokemon) =>
-      pokemon.types.some((type) => type.type.name === name)
+    const filterButton = document.getElementById(name)
+    filterButton.classList.toggle('pressed')
+    if (filterArray.includes(name)) {
+      const index = filterArray.indexOf(name)
+      if (index > -1) {
+        filterArray.splice(index, 1)
+      }
+    } else {
+      filterArray.push(name)
+    }
+
+    setFilterArray(filterArray)
+
+    if (!filterArray.length) {
+      setFilteredData(pokemonData)
+      return
+    }
+
+    const filteredData = pokemonData.filter((pokemon) =>
+      pokemon.types.some((el) => filterArray.includes(el.type.name.toLowerCase()))
     )
-    setPokemonData(filteredPokemonList)
+    setFilteredData(filteredData)
   }
 
-  function goToTheNextPage () {
-    setCurrentUrl(nextPage)
-  }
-
-  function goToThePreviousPage () {
-    setCurrentUrl(prevPage)
+  function handleSelectChange (e) {
+    switch (e.target.value) {
+      case '20':
+        load(URL20)
+        setNumberToLoad(e.target.value)
+        break
+      case '50':
+        load(URL50)
+        setNumberToLoad(e.target.value)
+        break
+      case 'all':
+        load(URL_ALL)
+        setNumberToLoad(e.target.value)
+        break
+      default:
+        load(URL20)
+    }
   }
 
   function load (url) {
-    setLoading(true)
     setCurrentUrl(url)
-    setLoading(false)
   }
 
   return (
@@ -111,24 +141,29 @@ function App () {
         <div className="main">
           <div className="main__types-buttons">
           {types.map((type) => (
-            <button key={type.name} onClick={() => filterByType(type.name)} className="main__type-button" style={{ backgroundColor: pokemonTypes[type.name] }}>
+            <button key={type.name} id={type.name} onClick={() => filterByType(type.name)} className="main__type-button" style={{ backgroundColor: pokemonTypes[type.name] }}>
               {type.name}
             </button>
           ))}
           </div>
-          <button onClick={() => load(URL_ALL)} className="button is-warning is-focused">Load `em all</button>
+          <select onChange={(e) => handleSelectChange(e)} value={numberToLoad}>
+          <option>choose the number to load</option>
+            <option value='20'>20</option>
+            <option value='50'>50</option>
+            <option value='all'>all</option>
+          </select>
           <input
             type="text"
             id="search-query"
             className="input input is-normal"
             placeholder="Start filter the pokemons!"
-            value={query}
-            onChange={handleInputChange}
+            value={filter}
+            onChange={({ currentTarget: { value } }) => setFilter(value)}
           />
           <div className="main__container">
             { pokemonData.length
               ? (
-                  pokemonData.map((pokemon) => (
+                  filteredData.map((pokemon) => (
               <Card
                 key={pokemon.id}
                 pokemon={pokemon}
@@ -145,7 +180,7 @@ function App () {
           <div className="main__button-container">
             {prevPage && (
               <Button
-                action={() => goToThePreviousPage(prevPage)}
+                action={() => load(prevPage)}
                 className="button is-warning is-focused"
               >
                 &lt; Back
@@ -153,7 +188,7 @@ function App () {
             )}
             {nextPage && (
               <Button
-                action={() => goToTheNextPage(nextPage)}
+                action={() => load(nextPage)}
                 className="button is-warning is-focused"
               >
                 Next &gt;
