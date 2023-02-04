@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 15px;
 
   &__container {
     display: flex;
@@ -39,16 +40,24 @@
 
   &__types-buttons {
     display: flex;
+    flex-wrap: wrap;
     margin: 10px 0;
+    align-items: center;
+    justify-content: center;
   }
 
   &__type-button {
-    margin: 0 5px;
-    padding: 5px 10px;
+    margin: 3px;
+    padding: 5px 0;
+    width: 65px;
     text-transform: capitalize;
     border-radius: 5px;
     outline: none;
     border: 2px solid transparent
+  }
+
+  &__query-wrapper {
+    margin: 5px 10px;
   }
 
   @media screen and (max-width: 1000px) {
@@ -86,7 +95,8 @@
 }
 
 .input {
-  width: 300px !important;
+  width: 240px;
+  margin: 0 5px;
 }
 
 @-webkit-keyframes spin {
