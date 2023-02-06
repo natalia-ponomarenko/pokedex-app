@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 Modal.setAppElement('#root')
 
-export function StatsList ({ pokemons, modalIsOpen, closeModal }) {
+export function StatsList ({ pokemons, modalIsOpen, closeModal, addPokemon }) {
   return (
     <Modal
       isOpen={modalIsOpen}
@@ -21,6 +21,7 @@ export function StatsList ({ pokemons, modalIsOpen, closeModal }) {
             pokemon={pokemon}
             key={pokemon.id}
             closeModal={closeModal}
+            addPokemon={addPokemon}
           />
         ))}
       </div>
@@ -42,7 +43,8 @@ StatsList.propTypes = {
     moves: PropTypes.arrayOf(PropTypes.object).isRequired
   })),
   modalIsOpen: PropTypes.bool.isRequired,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  addPokemon: PropTypes.func.isRequired
 }
 
 StatsList.defaultProps = {

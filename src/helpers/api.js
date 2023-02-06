@@ -1,5 +1,4 @@
-const typeUrl = 'https://pokeapi.co/api/v2/type/'
-const URL_ALL = 'https://pokeapi.co/api/v2/pokemon/?limit=1118'
+import { typeUrl, URL_ALL } from './constants'
 
 export const request = (url, options = {}) => fetch(url, options)
   .then((response) => {

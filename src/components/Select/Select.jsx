@@ -5,42 +5,42 @@ import { URL10, URL20, URL50, URL_ALL } from '../../helpers/constants'
 export function Select ({ loadPokemons }) {
   const [numberToLoad, setNumberToLoad] = useState('')
 
-  function handleSelectChange (e) {
-    switch (e.target.value) {
+  function handleSelectChange (event) {
+    switch (event.target.value) {
       case '10':
+        setNumberToLoad(event.target.value)
         loadPokemons(URL10)
-        setNumberToLoad(e.target.value)
         break
       case '20':
+        setNumberToLoad(event.target.value)
         loadPokemons(URL20)
-        setNumberToLoad(e.target.value)
         break
       case '50':
+        setNumberToLoad(event.target.value)
         loadPokemons(URL50)
-        setNumberToLoad(e.target.value)
         break
       case 'all':
+        setNumberToLoad(event.target.value)
         loadPokemons(URL_ALL)
-        setNumberToLoad(e.target.value)
         break
       default:
+        setNumberToLoad(event.target.value)
         loadPokemons(URL10)
-        setNumberToLoad(e.target.value)
     }
   }
   return (
     <div className="select is-success">
-    <select
-      onChange={(e) => handleSelectChange(e)}
-      value={numberToLoad}
-      className="is-hovered"
-    >
-      <option disabled={true} value="">Choose the number to load</option>
-      <option value="10">10</option>
-      <option value="20">20</option>
-      <option value="50">50</option>
-      <option value="all">all</option>
-    </select>
+      <select
+        value={numberToLoad}
+        onChange={(event) => handleSelectChange(event)}
+        className="is-hovered"
+      >
+        <option disabled={true} value=''>Choose the number to load</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="all">all</option>
+      </select>
   </div>
   )
 }

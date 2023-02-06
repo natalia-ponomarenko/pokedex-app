@@ -10,6 +10,8 @@ import { StatsList } from './components/StatsList/StatsList'
 import { PokemonList } from './components/PokemonList/PokemonList'
 import { Select } from './components/Select/Select'
 import { Input } from './components/Input/Input'
+import { PersonalCollection } from './components/PersonalCollection/PersonalCollection'
+import { Header } from './components/Header/Header'
 
 function App () {
   const [currentUrl, setCurrentUrl] = useState(URL10)
@@ -22,6 +24,21 @@ function App () {
   const [types, setTypes] = useState([])
   const [filterArray, setFilterArray] = useState([])
   const [filteredData, setFilteredData] = useState(pokemonData)
+  const [personalCollection, setPersonalCollection] = useState(() => {
+    const savedCollection = JSON.parse(
+      localStorage.getItem('personalCollection')
+    )
+    return savedCollection || []
+  })
+
+  useEffect(() => {
+    if (personalCollection.length) {
+      localStorage.setItem(
+        'personalCollection',
+        JSON.stringify(personalCollection)
+      )
+    }
+  }, [personalCollection])
 
   const loadPokemon = async (data) => {
     const pokemon = await Promise.all(
@@ -62,6 +79,20 @@ function App () {
     setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
+  const addPokemon = (pokemonId) => {
+    if (personalCollection.find((pokemon) => pokemon.id === pokemonId)) {
+      return personalCollection
+    }
+    const newPokemon = pokemonData.filter(
+      (pokemon) => pokemon.id === pokemonId
+    )
+    setPersonalCollection((prevState) => [...prevState, ...newPokemon])
+  }
+
+  // const deletePokemon = (pokemonId) => {
+  //   setPersonalCollection((prevState) => prevState.filter((pokemon) => pokemon.id !== pokemonId))
+  // }
+
   function filterByType (name) {
     const filterButton = document.getElementById(name)
     filterButton.classList.toggle('pressed')
@@ -95,10 +126,10 @@ function App () {
 
   return (
     <>
-      {/* <div className="header title is-2">Pokedex App</div> */}
+      <Header />
       {loading
         ? (
-          <Loader />
+        <Loader />
           )
         : (
         <div className="main">
@@ -116,7 +147,7 @@ function App () {
             ))}
           </div>
           <div className="main__query-wrapper">
-            <Select loadPokemons={loadPokemons}/>
+            <Select loadPokemons={loadPokemons} />
             <Input
               setFilteredData={setFilteredData}
               pokemonData={pokemonData}
@@ -125,11 +156,11 @@ function App () {
           <div className="main__container">
             {filteredData.length
               ? (
-                <PokemonList
-                  filteredData={filteredData}
-                  openModal={openModal}
-                  handlePokemonSelection={handlePokemonSelection}
-                />
+              <PokemonList
+                filteredData={filteredData}
+                openModal={openModal}
+                handlePokemonSelection={handlePokemonSelection}
+              />
                 )
               : (
               <div>No pokemons here. Try to load more and filter again</div>
@@ -157,7 +188,18 @@ function App () {
             pokemons={pokemons}
             modalIsOpen={modalIsOpen}
             closeModal={closeModal}
+            addPokemon={addPokemon}
           />
+          <div className='main__hidden-panel'>
+            <h1 className='title is-2 has-text-white has-text-centered'>My Collection</h1>
+          <div className="main__container">
+
+          <PersonalCollection
+            personalCollection={personalCollection}
+            handlePokemonSelection={handlePokemonSelection}
+          />
+          </div>
+          </div>
         </div>
           )}
     </>

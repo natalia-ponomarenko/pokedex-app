@@ -2,12 +2,19 @@ import React from 'react'
 import './Stats.scss'
 import PropTypes from 'prop-types'
 
-export const Stats = ({ pokemon, closeModal }) => {
+export const Stats = ({ pokemon, closeModal, addPokemon }) => {
+  const addDefaultSrc = (event) => {
+    event.target.src = '../images/Poke_ball.png'
+  }
+
   return (
+    <>
+    <button onClick={() => addPokemon(pokemon.id)}>Add Pokemon</button>
     <div className='stats__container' onClick={closeModal}>
       <div className='stats__image-container'>
         <img
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+          onError={addDefaultSrc}
           alt={pokemon.name} className="stats__image"
         />
       </div>
@@ -29,6 +36,7 @@ export const Stats = ({ pokemon, closeModal }) => {
         ))}
       </div>
     </div>
+    </>
   )
 }
 
@@ -44,7 +52,8 @@ Stats.propTypes = {
     })).isRequired
   }),
   selectPokemon: PropTypes.func,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  addPokemon: PropTypes.func.isRequired
 }
 
 Stats.defaultProps = {

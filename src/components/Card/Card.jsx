@@ -73,9 +73,10 @@ Card.propTypes = {
     moves: PropTypes.arrayOf(PropTypes.object).isRequired
   }),
   selectPokemon: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired
+  openModal: PropTypes.func
 }
 
 Card.defaultProps = {
-  pokemon: {}
+  pokemon: {},
+  openModal: () => {}
 }
