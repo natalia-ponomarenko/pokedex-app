@@ -31,18 +31,20 @@ export function Input ({ setFilteredData, pokemonData }) {
 }
 
 Input.propTypes = {
-  pokemonData: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    weight: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    types: PropTypes.arrayOf(
-      PropTypes.shape({
-        slot: PropTypes.number
-      })
-    ).isRequired,
-    moves: PropTypes.arrayOf(PropTypes.object).isRequired
-  })),
+  pokemonData: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      weight: PropTypes.number.isRequired,
+      height: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      types: PropTypes.arrayOf(
+        PropTypes.shape({
+          slot: PropTypes.number
+        })
+      ).isRequired,
+      moves: PropTypes.arrayOf(PropTypes.object).isRequired
+    })
+  ),
   setFilteredData: PropTypes.func.isRequired
 }
 

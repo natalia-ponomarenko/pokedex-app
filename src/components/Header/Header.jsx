@@ -3,9 +3,20 @@ import './Header.scss'
 
 export function Header () {
   return (
-    <div className='header'>
-      <img src="../../images/pokemon-logo.png" alt="Pokemon Logo" className='header__image' />
-      <a href="https://pokeapi.co/" target="_blank" rel="noreferrer">PokeAPI</a>
+    <div className="header">
+      <img
+        src="../../images/pokemon-logo.png"
+        alt="Pokemon Logo"
+        className="header__image"
+      />
+      <a
+        href="https://pokeapi.co/"
+        target="_blank"
+        rel="noreferrer"
+        className="header__link"
+      >
+        PokeAPI
+      </a>
     </div>
   )
 }

@@ -4,14 +4,12 @@ import './App.scss'
 import { Button } from './components/Button/Button'
 import { getTypes } from './helpers/api'
 import pokemonTypes from './helpers/pokemonTypes'
-import { URL10 } from './helpers/constants'
 import { Loader } from './components/Loader'
 import { StatsList } from './components/StatsList/StatsList'
 import { PokemonList } from './components/PokemonList/PokemonList'
-import { Select } from './components/Select/Select'
 import { Input } from './components/Input/Input'
-import { PersonalCollection } from './components/PersonalCollection/PersonalCollection'
 import { Header } from './components/Header/Header'
+import { URL10, URL20, URL50, URL_ALL } from './helpers/constants'
 
 function App () {
   const [currentUrl, setCurrentUrl] = useState(URL10)
@@ -20,25 +18,11 @@ function App () {
   const [prevPage, setPrevPage] = useState('')
   const [loading, setLoading] = useState(true)
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [pokemons, setPokemon] = useState([])
+  const [pokemon, setPokemon] = useState([])
   const [types, setTypes] = useState([])
   const [filterArray, setFilterArray] = useState([])
   const [filteredData, setFilteredData] = useState(pokemonData)
-  const [personalCollection, setPersonalCollection] = useState(() => {
-    const savedCollection = JSON.parse(
-      localStorage.getItem('personalCollection')
-    )
-    return savedCollection || []
-  })
-
-  useEffect(() => {
-    if (personalCollection.length) {
-      localStorage.setItem(
-        'personalCollection',
-        JSON.stringify(personalCollection)
-      )
-    }
-  }, [personalCollection])
+  const [numberToLoad, setNumberToLoad] = useState('')
 
   const loadPokemon = async (data) => {
     const pokemon = await Promise.all(
@@ -79,20 +63,6 @@ function App () {
     setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
-  const addPokemon = (pokemonId) => {
-    if (personalCollection.find((pokemon) => pokemon.id === pokemonId)) {
-      return personalCollection
-    }
-    const newPokemon = pokemonData.filter(
-      (pokemon) => pokemon.id === pokemonId
-    )
-    setPersonalCollection((prevState) => [...prevState, ...newPokemon])
-  }
-
-  // const deletePokemon = (pokemonId) => {
-  //   setPersonalCollection((prevState) => prevState.filter((pokemon) => pokemon.id !== pokemonId))
-  // }
-
   function filterByType (name) {
     const filterButton = document.getElementById(name)
     filterButton.classList.toggle('pressed')
@@ -124,6 +94,30 @@ function App () {
     setCurrentUrl(url)
   }
 
+  function handleSelectChange (e) {
+    switch (e.target.value) {
+      case '10':
+        loadPokemons(URL10)
+        setNumberToLoad(e.target.value)
+        break
+      case '20':
+        loadPokemons(URL20)
+        setNumberToLoad('20')
+        break
+      case '50':
+        loadPokemons(URL50)
+        setNumberToLoad(e.target.value)
+        break
+      case 'all':
+        loadPokemons(URL_ALL)
+        setNumberToLoad(e.target.value)
+        break
+      default:
+        loadPokemons(URL10)
+        setNumberToLoad(e.target.value)
+    }
+  }
+
   return (
     <>
       <Header />
@@ -147,7 +141,21 @@ function App () {
             ))}
           </div>
           <div className="main__query-wrapper">
-            <Select loadPokemons={loadPokemons} />
+            <div className="select is-success">
+              <select
+                value={numberToLoad}
+                onChange={(e) => handleSelectChange(e)}
+                className="is-hovered"
+              >
+                <option disabled={true} value="">
+                  Choose the number to load
+                </option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="all">all</option>
+              </select>
+            </div>
             <Input
               setFilteredData={setFilteredData}
               pokemonData={pokemonData}
@@ -185,21 +193,10 @@ function App () {
             )}
           </div>
           <StatsList
-            pokemons={pokemons}
+            pokemon={pokemon}
             modalIsOpen={modalIsOpen}
             closeModal={closeModal}
-            addPokemon={addPokemon}
           />
-          <div className='main__hidden-panel'>
-            <h1 className='title is-2 has-text-white has-text-centered'>My Collection</h1>
-          <div className="main__container">
-
-          <PersonalCollection
-            personalCollection={personalCollection}
-            handlePokemonSelection={handlePokemonSelection}
-          />
-          </div>
-          </div>
         </div>
           )}
     </>
