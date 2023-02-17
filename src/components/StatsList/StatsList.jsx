@@ -7,7 +7,6 @@ import PropTypes from 'prop-types'
 Modal.setAppElement('#root')
 
 export function StatsList ({ pokemon, modalIsOpen, closeModal }) {
-  console.log(pokemon)
   return (
     <>
       <Modal
