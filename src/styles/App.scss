@@ -39,23 +39,20 @@
     justify-content: center;
   }
 
-  &__type-button {
-    margin: 3px;
-    padding: 5px 0;
-    width: 65px;
-    text-transform: capitalize;
-    border-radius: 5px;
-    outline: none;
-    border: 2px solid transparent
-  }
-
   &__query-wrapper {
     margin: 5px 10px;
+    display: flex;
+    align-items: center;
   }
 
-  &__hidden-panel {
-    background-color: red;
-    padding: 15px 0;
+  &__icon {
+    margin: 6px 3px 0 3px;
+    font-size: 20px;
+  }
+
+  &__message {
+    font-size: 24px;
+    color: red;
   }
 
   @media screen and (max-width: 545px) {

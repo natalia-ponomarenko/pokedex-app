@@ -5,7 +5,7 @@ export function Header () {
   return (
     <div className="header">
       <img
-        src="../../images/pokemon-logo.png"
+        src="./images/pokemon-logo.png"
         alt="Pokemon Logo"
         className="header__image"
       />

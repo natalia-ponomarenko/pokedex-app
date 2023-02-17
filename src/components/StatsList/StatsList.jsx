@@ -19,7 +19,11 @@ export function StatsList ({ pokemon, modalIsOpen, closeModal }) {
       >
         <div>
           {pokemon.map((pokemon) => (
-            <Stats pokemon={pokemon} key={pokemon.id} closeModal={closeModal} />
+            <Stats
+              pokemon={pokemon}
+              key={pokemon.id}
+              closeModal={closeModal}
+            />
           ))}
         </div>
       </Modal>

@@ -1,14 +1,17 @@
 import 'bulma'
+import './styles/App.scss'
 import React, { useEffect, useState } from 'react'
-import './App.scss'
-import { Button } from './components/Button/Button'
-import { getTypes } from './helpers/api'
-import pokemonTypes from './helpers/pokemonTypes'
+import { Button } from './components/Button'
 import { Loader } from './components/Loader'
-import { StatsList } from './components/StatsList/StatsList'
-import { PokemonList } from './components/PokemonList/PokemonList'
-import { Input } from './components/Input/Input'
-import { Header } from './components/Header/Header'
+import { StatsList } from './components/StatsList'
+import { PokemonList } from './components/PokemonList'
+import { Input } from './components/Input'
+import { Header } from './components/Header'
+import { TypesList } from './components/TypesList'
+import { Message } from './components/Message'
+import { Select } from './components/Select'
+import { Icon } from './components/Icon'
+import { getTypes } from './helpers/api'
 import { URL10, URL20, URL50, URL_ALL } from './helpers/constants'
 
 function App () {
@@ -23,39 +26,47 @@ function App () {
   const [filterArray, setFilterArray] = useState([])
   const [filteredData, setFilteredData] = useState(pokemonData)
   const [numberToLoad, setNumberToLoad] = useState('')
+  const [errorText, setErrorText] = useState('')
 
   const loadPokemon = async (data) => {
-    const pokemon = await Promise.all(
-      data.map(async (pokemon) => {
-        return await fetch(pokemon.url)
-          .then((res) => res.json())
-          .then((data) => data)
-      })
-    )
-
-    setPokemonData(pokemon)
+    try {
+      const pokemon = await Promise.all(
+        data.map(async (pokemon) => {
+          return await fetch(pokemon.url)
+            .then((res) => res.json())
+            .then((data) => data)
+        })
+      )
+      setPokemonData(pokemon)
+    } catch (error) {
+      setErrorText(error.message)
+    }
   }
 
   useEffect(() => {
     const dowloadData = async (url) => {
-      setLoading(true)
-      const response = await fetch(url)
-      const data = await response.json()
-      loadPokemon(data.results)
-      setPrevPage(data.previous)
-      setNextPage(data.next)
-      getTypes().then((types) => setTypes(types))
-      setLoading(false)
+      try {
+        setLoading(true)
+        const response = await fetch(url)
+        const data = await response.json()
+        loadPokemon(data.results)
+        setPrevPage(data.previous)
+        setNextPage(data.next)
+        getTypes().then((types) => setTypes(types))
+        setLoading(false)
+      } catch (error) {
+        setErrorText(error.message)
+      }
     }
     dowloadData(currentUrl)
     setFilterArray([])
   }, [currentUrl])
 
-  function openModal () {
+  const openModal = () => {
     setIsOpen(true)
   }
 
-  function closeModal () {
+  const closeModal = () => {
     setIsOpen(false)
   }
 
@@ -63,7 +74,7 @@ function App () {
     setPokemon(pokemonData.filter((pokemon) => pokemon.id === pokemonId))
   }
 
-  function filterByType (name) {
+  const filterByType = (name) => {
     const filterButton = document.getElementById(name)
     filterButton.classList.toggle('pressed')
     if (filterArray.includes(name)) {
@@ -90,31 +101,31 @@ function App () {
     setFilteredData(filteredData)
   }
 
-  function loadPokemons (url) {
+  const loadPokemons = (url) => {
     setCurrentUrl(url)
   }
 
-  function handleSelectChange (e) {
-    switch (e.target.value) {
+  const handleSelectChange = (event) => {
+    switch (event.target.value) {
       case '10':
         loadPokemons(URL10)
-        setNumberToLoad(e.target.value)
+        setNumberToLoad(event.target.value)
         break
       case '20':
         loadPokemons(URL20)
-        setNumberToLoad('20')
+        setNumberToLoad(event.target.value)
         break
       case '50':
         loadPokemons(URL50)
-        setNumberToLoad(e.target.value)
+        setNumberToLoad(event.target.value)
         break
       case 'all':
         loadPokemons(URL_ALL)
-        setNumberToLoad(e.target.value)
+        setNumberToLoad(event.target.value)
         break
       default:
         loadPokemons(URL10)
-        setNumberToLoad(e.target.value)
+        setNumberToLoad('10')
     }
   }
 
@@ -128,34 +139,13 @@ function App () {
         : (
         <div className="main">
           <div className="main__types-buttons">
-            {types.map((type) => (
-              <button
-                key={type.name}
-                id={type.name}
-                onClick={() => filterByType(type.name)}
-                className="main__type-button"
-                style={{ backgroundColor: pokemonTypes[type.name] }}
-              >
-                {type.name}
-              </button>
-            ))}
+            <TypesList types={types} filter={filterByType} />
           </div>
           <div className="main__query-wrapper">
-            <div className="select is-success">
-              <select
-                value={numberToLoad}
-                onChange={(e) => handleSelectChange(e)}
-                className="is-hovered"
-              >
-                <option disabled={true} value="">
-                  Choose the number to load
-                </option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="all">all</option>
-              </select>
-            </div>
+            <Select
+              value={numberToLoad}
+              handleSelectChange={handleSelectChange}
+            />
             <Input
               setFilteredData={setFilteredData}
               pokemonData={pokemonData}
@@ -171,7 +161,9 @@ function App () {
               />
                 )
               : (
-              <div>No pokemons here. Try to load more and filter again</div>
+              <Message
+                text={errorText || 'No pokemons here. Try to load more!'}
+              />
                 )}
           </div>
           <div className="main__button-container">
@@ -180,7 +172,8 @@ function App () {
                 action={() => loadPokemons(prevPage)}
                 className="button is-warning is-focused"
               >
-                &lt; Back
+                <Icon side="left" />
+                Back
               </Button>
             )}
             {nextPage && (
@@ -188,7 +181,8 @@ function App () {
                 action={() => loadPokemons(nextPage)}
                 className="button is-warning is-focused"
               >
-                Next &gt;
+                Next
+                <Icon side="right" />
               </Button>
             )}
           </div>

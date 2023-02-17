@@ -1,5 +1,4 @@
 import React from 'react'
-import '../../App.scss'
 import PropTypes from 'prop-types'
 
 export const Button = ({ action, className, children }) => (
@@ -9,12 +8,11 @@ export const Button = ({ action, className, children }) => (
 )
 
 Button.propTypes = {
-  action: PropTypes.func,
+  action: PropTypes.func.isRequired,
   className: PropTypes.string,
-  children: PropTypes.string.isRequired
+  children: PropTypes.array || PropTypes.string
 }
 
 Button.defaultProps = {
-  action: () => {},
   className: 'button'
 }
